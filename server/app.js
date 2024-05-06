@@ -1,11 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const UserRoute = require("./routes/userRoutes");
-
+const UserAuthRoute = require("./routes/userAuthRoutes");
+const CompanyRoute  = require("./routes/companyRoutes");
+const AdminRoute = require("./routes/adminRoutes");
+const StudentRoute =require("./routes/studentRoutes");
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/',UserRoute);
+app.use('/',UserAuthRoute);
+app.use('/',CompanyRoute);
+app.use('/',AdminRoute);
+app.use('/',StudentRoute);
 
 module.exports = app;

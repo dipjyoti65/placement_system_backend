@@ -4,10 +4,11 @@ const Student = require('../models/studentModel');
 const Company = require('../models/companyModel');
 const Admin = require('../models/adminModel');
 
+
 exports.signup = async(req,res)=>{
   try{
     const{name,email,password,role} = req.body;
-    console.log("req.body: ", req.body);
+    // console.log("req.body: ", req.body);
     let User;
     switch(role){
       case 'Student':
@@ -40,7 +41,7 @@ exports.signup = async(req,res)=>{
       })
 
       newStudent = await newStudent.save();
-      res.status(201).json({message: 'User Created Succesfully',newStudent});
+      res.status(201).json({message: 'User Created Successfully',newStudent});
 
     }else if(User === Company){
       let newCompany = new Company({
@@ -52,7 +53,7 @@ exports.signup = async(req,res)=>{
 
       newCompany = await newCompany.save();
       console.log(res.body);
-      res.status(201).json({message: 'User Created Succesfully',newCompany});
+      res.status(201).json({message: 'User Created Successfully',newCompany});
     }
 
   }catch(error){
@@ -91,10 +92,32 @@ exports.signin = async(req,res)=>{
       return res.status(401).json({message: 'Invalid password'});
     }
 
-    res.status(200).json({message: 'Login successfull',user});
+    const token = jwt.sign({id: user._id},"passwordKey");
+    res.json({token, ...user._doc});
 
   }catch(error){
     console.log('Login error: ',error);
-    res.status(500).json({message: 'Internal server error'});
+    // res.status(500).json({message: 'Internal server error'});
   }
+};
+
+exports.tokenIsValid = async(req,res) =>{
+  try{
+    const token = req.header("x-auth-token");
+    if(!token)return res.json(false);
+   
+    const verified = jwt.verify(token,"passwordKey");
+    if(!verified)return res.json(false);
+
+    const user = await User.findById(verified.id);
+    if(!user) return res.json(false);
+    res.json(true);
+  }catch(e){
+    res.status(500).json({error: e.message});
+  }
+};
+
+exports.auth = async(req,res) =>{
+  const user = await User.findById(req.user);
+  res.json({...user._doc,token: req.token});
 };
