@@ -101,6 +101,37 @@ exports.signin = async(req,res)=>{
   }
 };
 
+
+exports.getUser = async(req,res)=>{
+  try{
+    const{email,role} = req.query;
+
+    let User;
+    switch(role){
+      case 'Admin':
+        User = Admin;
+        break;
+      case 'Student':
+        User = Student;
+        break;
+      case 'Company':
+        User = Company;
+        break;
+      default:
+        return res.status(400).json({message: 'Invalid role'});
+    }
+
+    const user = await User.find({email,role});
+    res.status(200).json(user);
+
+    if(!user){
+      return res.status(404).json({message: 'User not found'});
+    }
+  }catch(error){
+    console.log('Server error',error);
+  }
+}
+
 exports.tokenIsValid = async(req,res) =>{
   try{
     const token = req.header("x-auth-token");

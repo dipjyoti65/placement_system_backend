@@ -2,7 +2,7 @@ const Job = require("../models/jobModel");
 
 exports.postJob = async (req, res) => {
   try {
-    const { companyId, title, experience, vacancy, description } = req.body;
+    const { companyId,title, experience, vacancy, description } = req.body;
     console.log("req.body:", req.body);
     //Create new Job posting
     let newJob = new Job({

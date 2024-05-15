@@ -8,7 +8,7 @@ exports.getAllJobs = async(req,res) =>{
     res.status(200).json(_jbos);
   }catch(error){
     console.error('Job retrieval error: ', error);
-    res.status(500).json({error: error.message});
+    res.status(500).json({error: error.message});s
   }
 };
 
