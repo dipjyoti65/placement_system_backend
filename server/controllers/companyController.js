@@ -14,7 +14,7 @@ exports.postJob = async (req, res) => {
     });
 
     newJob = await newJob.save();
-    res.status(201).json({message:'Job Posted Successfully',newJob});
+    res.status(201).json('Job Posted Successfully');
   } catch (error) {
     console.error('Job posting error: ',error);
     res.status(500).json({error: error.message});

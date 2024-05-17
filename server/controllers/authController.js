@@ -53,7 +53,7 @@ exports.signup = async(req,res)=>{
 
       newCompany = await newCompany.save();
       console.log(res.body);
-      res.status(201).json({message: 'User Created Successfully',newCompany});
+      res.status(201).json({message: 'User Created Successfully'});
     }
 
   }catch(error){
