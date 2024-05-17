@@ -16,10 +16,19 @@ exports.getApprovedJobs = async(req,res)=>{
 //Apply jobs by studnets
 exports.applyJob = async(req,res)=>{
   try{
-    const {studentId, jobId} = req.body;
+    const {studentId, jobId,Status} = req.body;
 
-    
+    //Create new Application
+    let newApplication = new Application({
+      jobId,
+      studentId,
+      Status,
+    });
+
+    newApplication = await newApplication.save();
+    res.status(201).json({message: 'Job Applied Successfully'});
   }catch(error){
-
+    console.error('Application failed:',error);
+    res.status(500).json({error: error.message});
   }
 }

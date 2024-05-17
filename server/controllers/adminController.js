@@ -4,7 +4,7 @@ const Job = require("../models/jobModel");
 exports.getAllJobs = async(req,res) =>{
   try{
     //Retrieve All jobs
-    const _jbos = await Job.find();
+    const _jbos = await Job.find({status: 'Pending'});
     res.status(200).json(_jbos);
   }catch(error){
     console.error('Job retrieval error: ', error);
