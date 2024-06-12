@@ -1,5 +1,6 @@
+const Application = require("../models/applicationModel");
 const Job = require("../models/jobModel");
-
+const Student = require("../models/studentModel");
 exports.postJob = async (req, res) => {
   try {
     const { companyId,title, experience, vacancy, description } = req.body;
@@ -44,5 +45,39 @@ exports.getApprovedJobForCompany = async(req, res) =>{
     res.status(500).json({error: error.message});
   }
 }
+
+// Get Applied Student for each Approved job of a particular company
+exports.getAppliedStudent = async(req,res)=>{
+  try{
+    const{jobId} = req.query;
+
+    //Query the MongoDb database to find all applicants by the jobid
+    const applicants = await Application.find({jobId});
+
+    if(!applicants || applicants.length === 0){
+      return res.status(200).json({applicantDetails : []});
+    }
+
+    //Retrieve the applicant details for each job
+    const applicantDetails = [];
+
+    for(const applicant of applicants){
+      const student = await Student.findById(applicant.studentId);
+      if(student){
+        applicantDetails.push({
+          studentId: student._id,
+          name: student.name,
+          address: student.address,
+          semester: student.semester
+        })
+      }
+    }
+    res.status(200).json({applicantDetails});
+  }catch(error){
+    console.error('Applicant retrival error: ',error);
+    res.status(500).json({error: error.message});
+  }
+}
+
 
 
