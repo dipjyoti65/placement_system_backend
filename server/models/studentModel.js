@@ -40,22 +40,26 @@ const studentSchema = mongoose.Schema({
     type: String,
   },
 
-  courseType: {
+  branch: {
     type: String,
-  },
-
-  courseName: {
-    type: String,
-  },
-
-  semester: {
-    type: Number,
   },
 
   phone:{
-    type: Number,
-  }
+    type: String,
+  },
 
+  tenth:{
+    type: String,
+  },
+
+  twelve:{
+    type: String,
+  },
+
+  image:{
+    data: Buffer,
+    contentType: String,
+  },
   
 });
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { validate } = require('./jobModel');
 
 const adminSchema = mongoose.Schema({
   name:{
@@ -30,6 +31,16 @@ const adminSchema = mongoose.Schema({
     required:true,
     type: String,
   },
+
+  phone:{
+    type:String,
+    trime:true,
+  },
+
+  image:{
+    data:Buffer,
+    contentType:String,
+  }
 
 });
 

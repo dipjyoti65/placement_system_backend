@@ -1,6 +1,7 @@
 const Application = require("../models/applicationModel");
 const Job = require("../models/jobModel");
 const Student = require("../models/studentModel");
+const Company = require("../models/companyModel");
 exports.postJob = async (req, res) => {
   try {
     const { companyId,title, experience, vacancy, description } = req.body;
@@ -80,4 +81,125 @@ exports.getAppliedStudent = async(req,res)=>{
 }
 
 
+// Update Selected Student Application status as Selected
+exports.approvedApplication = async(req,res)=>{
+  try{
+    const{jobId,studentId} = req.query;
 
+    //Update Application Status as Selected
+    const applications = await Application.findOne({jobId,studentId});
+    if(!applications || applications.length === 0){
+      return res.status(200).json({message: 'No application found for the specified jobId'});
+    }
+
+    applications.Status = 'Selected';
+    await applications.save();
+
+    const applicationsDetails = {
+      applicationId : applications._id,
+      studentId: applications.studentId,
+      jobId:applications.jobId,
+      status:applications.Status
+    };
+
+    res.status(200).json({message:'Student is Selected',applicationsDetails});
+  }catch(error){
+    console.error('Student selection failed: ',error);
+    res.status(500).json({error:error.message});
+  }
+}
+
+
+//Update Rejected Student Application status as Rejected
+exports.rejectApplication = async(req,res)=>{
+  try{
+    const{jobId,studentId} = req.query;
+
+    const applications = await Application.findOne({jobId,studentId});
+
+    if(!applications || applications.length === 0){
+      return res.status(200).json({message: 'No application found for the specified jobId'});
+    }
+
+    applications.Status = 'Rejected';
+    await applications.save();
+
+    const applicationsDetails ={
+      applicationId : applications._id,
+      studentId: applications.studentId,
+      jobId: applications.jobId,
+      status: applications.Status
+    };
+
+    res.status(200).json({message: 'Student is Selected',applicationsDetails});
+  }catch(error){
+    console.error('Student rejection failed: ',error);
+    res.status(500).json({error: error.message});
+  }
+}
+
+
+// UpdateCompany Details
+exports.updateCompany = async(req,res)=>{
+  try{
+    const companyId = req.params.id;
+
+    const updateData = {};
+    if(req.body.name) updateData.name = req.body.name;
+    if(req.body.email) updateData.email = req.body.email;
+    if(req.body.phone) updateData.phone = req.body.phone;
+    if(req.body.address) updateData.address = req.body.address;
+    if(req.file){
+      updateData.image = {
+        data : req.file.buffer,
+        contentType: req.file.mimetype,
+      };
+    }
+
+    const company = await company.findByIdAndUpdate(companyId, updateData,{new: true});
+
+    if(!company){
+      return res.status(404).json({message: 'Coampny not found'});
+    }
+
+    res.status(200).json(company);
+  }catch(error){
+  console.error('Student details not updated : ',error);
+  res.status(500).json({error: error.message});
+  }
+}
+
+
+// Get Student Data
+exports.getComapnyDetails = async(req,res)=>{
+  try{
+    const companyId = req.params.id;
+    const company = await Student.findById(companyId);
+
+    if(!company){
+      return res.status(404).json({message: 'comapny not found'});
+    }
+
+    let imageData = null;
+    if(company.image && company.image.data){
+      imageData = company.image.data.toString('base64');
+    }
+
+    const responseData = {
+      name: company.name,
+      email: company.email,
+      phone: company.phone,
+      branch: company.branch,
+      gender: company.gender,
+      address: company.address,
+      tenth: company.tenth,
+      tewlve : company.tewlve,
+      image: imageData,
+    };
+
+    res.status(200).json(responseData);
+  }catch(error){
+    console.error('Company Details not retrieved: ',error);
+    res.status(500).json({error: error.message});
+  }
+}

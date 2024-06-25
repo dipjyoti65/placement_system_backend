@@ -34,6 +34,10 @@ const companySchema = mongoose.Schema({
   phone:{
     type: Number,
   },
+
+  address:{
+    type: String,
+  }
 });
 
 
